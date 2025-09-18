@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends RuntimeException {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private final View error;
@@ -35,8 +35,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleEmailAlreadyExistsException(
-            EmailAlreadyExistsException e) {
+    public ResponseEntity<Map<String, String>>
+            handleEmailAlreadyExistsException(
+                    EmailAlreadyExistsException e) {
 
         log.warn("Email address alraedy exist {}", e.getMessage());
 
@@ -44,6 +45,18 @@ public class GlobalExceptionHandler {
         errors.put("message", "Email address already exists");
         return ResponseEntity.badRequest().body(errors);
 
+    }
+
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<Map<String, String>>
+            handlePatientNotFoundException (
+                    PatientNotFoundException e) {
+
+        log.warn("Patient not Found {}", e.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Patient not Found");
+        return ResponseEntity.badRequest().body(errors);
     }
 
 }
